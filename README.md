@@ -12,7 +12,7 @@ Placeholder: Picture of mongo shell showing binary data.
 
 <h2>Running the Demo</h2>
 
-**Step 1:** **Node.js** and **npm** have to be installed for the web application. Then, from the <em>code</em> directory, run "npm install" to install the dependencies defined in <em>package.json</em>. 
+**Step 1: Prerequisites** **Node.js** and **npm** have to be installed for the web application. Then, from the <em>code</em> directory, run "npm install" to install the dependencies defined in <em>package.json</em>. This demo also uses MongoDB Compass and the MongoDB Shell (mongosh), which are both clients that can installed on your local desktop.
 
 **Step 2:** Launch the KMIP server. Queryable Encryption requires access to an external Key Management service to manage the Customer Master Key (CMK). This demonstration satisfies this requirement using HashiCorp Vault. Follow the instructions in Pierre's [blog](https://www.mongodb.com/developer/products/atlas/hashicorp-vault-kmip-secrets-engine-mongodb/). The Vault's endpoint and TLS certificates must then be specified in this project's <em>securityConf.js</em> configuration file. Note that a HashiCorp test license is still required. Any Python configuration steps can be skipped, since this demonstration uses a Node.js application in its place. 
 
@@ -30,7 +30,7 @@ With the KMIP Key Provider server running (i.e. the HashiCorp Vault server), and
 
 <h2>Recommended Demonstration Steps:</h2>
 
-1. Access index.html, enter the fields, and submit the data to MongoDB. Use MongoDB Compass to show what the data looks like in MongoDB.
+1. Access <em>index.html</em>, enter the fields, and submit the data to MongoDB. Use MongoDB Compass to show what the data looks like in MongoDB.
 2. Modify the field to include both First Name and Last Name, and submit the data to MongoDB. Observe the new data model using MongoDB Compass.
 3. Access <em>indexssn.html</em>, enter the fields, and submit the data once again. Observe the data in Compass, noting the encrypted SSN field.
 4. Using the same SSN, click Submit once more. Using Mongo Shell, note the two different ciphertext binary values used to represent the same SSN value. This is randomized encryption in action. 
