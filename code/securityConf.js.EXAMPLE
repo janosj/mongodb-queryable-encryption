@@ -1,0 +1,21 @@
+// Return configurations object.
+function getSecurityConf() {
+  return securityConf;
+}
+  
+const securityConf = {
+
+  SHARED_CRYPT_LIB_PATH: "/path/to/queryable-encryption/lib/mongo_crypt_v1.dylib",
+  
+  // KMIP Credentials
+  KMIP_KMS_ENDPOINT: "localhost:5697",
+  KMIP_TLS_CA_FILE: "/path/to/github/mongodb-developer/mongodb-kmip-fle-queryable/kmip-with-hashicorp-key-vault/vault/certs/QUERYABLE/vv-ca.pem",
+  KMIP_TLS_CERT_FILE: "/path/to/github/mongodb-developer/mongodb-kmip-fle-queryable/kmip-with-hashicorp-key-vault/vault/certs/QUERYABLE/vv-client.pem",
+
+  // The Key Vault collection stores the Data Encryption Keys (DEKs).
+  KEYVAULT_DB: "DEMO",
+  KEYVAULT_COLLECTION: "datakeys",
+
+};
+
+module.exports = { getSecurityConf };

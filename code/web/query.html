@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="Atlas Search" />
+  <meta name="author" content="Jonathan Janos" />
+
+  <title>Query Records</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Custom fonts for this template -->
+  <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js" rel="stylesheet" />-->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
+
+  <!-- Custom styles for this template -->
+  <link href="styles.css" rel="stylesheet" />
+
+  <style>
+    /* Ensures fixed footer doesn't overlap content */
+    body {
+      padding-bottom: 120px;
+    }
+    /* Search highlights */
+    .hl {
+      background-color: white; 
+      color: green ;
+    }
+  </style>
+  
+</head>
+
+
+<body>
+
+  <!-- Query Bar -->
+  <!--<div class="container-fluid sticky-top bg-success">-->
+  <div class="container-fluid sticky-top bg-white" style="border: 3px green; border-style: solid none;">
+    <div class="row border">
+      <div class="col p-3" align="center">
+        <form class="form" style="width: 50%">
+          <div class="input-group">
+            <label class="sr-only" for="alwaysAddLabels-invisible">Search Query</label>
+            <!-- add width here to put spacing in front of button -->
+            <input class="form-control" type="text" id="queryText" placeholder="SSN">
+            &nbsp;&nbsp;
+            <button class="btn btn-light" type="button" id="submitBtn" onclick="resetPage(); fetchResults(); return false;">Go</button>
+            &nbsp;&nbsp;
+            <button class="btn btn-light" type="reset" onclick="resetPage(); setQueryText(''); return false;">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 
+    Content holder for Search Results.
+    Empty at the outset, populated dynamically when the search results are retrieved.
+  -->    
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col p-3">
+        <div id="searchResultsSection"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 
+  Content holder for pagination links.
+  Empty at the outset, populated dynamically when the search results are retrieved.
+  -->    
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col p-3" align="center">
+        <div id="paginationLinks"></div>
+      </div>
+    </div>
+    <input hidden id="hiddenPageNumber" value="0" />
+    <input hidden id="hiddenQueryString" value="" />
+  </div>
+
+
+  <!-- 
+    Footer. Anchored to bottom of the screen.
+    Note: padding-bottom is required in body style to prevent overlapping content. 
+    Note: None of these links work - it's just for the look, helps it look like a real web app.
+  -->
+  <div class="container-fluid fixed-bottom bg-light">
+    <div class="row border p-3">
+      <div class="col text-center text-lg-left my-auto">
+        <ul class="list-inline mb-2">
+          <li class="list-inline-item"><a href="/about.html">About</a></li>
+          <li class="list-inline-item">&sdot;</li>
+          <li class="list-inline-item"><a href="/contact.html">Contact</a></li>
+          <li class="list-inline-item">&sdot;</li>
+          <li class="list-inline-item"><a href="/terms.html">Terms of Use</a></li>
+          <li class="list-inline-item">&sdot;</li>
+          <li class="list-inline-item"><a href="/privacy.html">Privacy Policy</a></li>
+        </ul>
+        <p class="text-muted small mb-4 mb-lg-0">
+          &copy; MongoDB 2023. All Rights Reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+
+    // Pagination. Number of results to retrieve and display.
+    const pageSize = 10;
+
+    function getPageNumber() {
+      return parseInt(document.getElementById("hiddenPageNumber").value);
+
+    }
+    function setPageNumber(newPageNumber) {
+      document.getElementById("hiddenPageNumber").value = newPageNumber;
+    }
+
+    // Fetch the next/previous page of results.
+    function getNewPage(newPageNumber) {
+
+      // Ensures that the query input field still matches the original query.
+      setQueryText(document.getElementById("hiddenQueryString").value);
+
+      clearSearchResults();
+      clearPageLinks();
+      setPageNumber(newPageNumber);
+      fetchResults();
+
+    }
+
+    function getQueryText() {
+      return document.getElementById("queryText").value;
+    }
+    function setQueryText(newQueryText) {
+      document.getElementById("queryText").value = newQueryText;
+    }
+
+
+    function clearSearchResults() {
+      document.getElementById("searchResultsSection").innerHTML = "";
+    }
+    function clearPageLinks() {
+      document.getElementById("paginationLinks").innerHTML = "";
+    }
+
+    function resetPage() {
+      clearSearchResults();
+      clearPageLinks();
+      setPageNumber(0);
+    }
+
+    // Submit form on pressing "enter"
+    var input = document.getElementById("queryText");
+    input.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("submitBtn").click();
+      }
+    });
+
+    // Fetch the new set of search results.
+    function fetchResults() {
+
+      // Exit if there's no query string.
+      if (!getQueryText()) {
+        return;
+      }
+
+      console.log("Fetching results.");
+
+      // Construct the request object.
+      var obj = {};
+      obj.queryText = getQueryText();
+      obj.pageSize = pageSize;
+      obj.pageNumber = getPageNumber();
+      console.log("Query object is: " + JSON.stringify(obj));
+
+      // Preserves the query string for future use in prev/next links.
+      document.getElementById("hiddenQueryString").value = obj.queryText;
+
+      fetch("/runQuery", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+      })
+      // stopped using this method b/c it doesn't allow for processing of error status
+      //.then(response => response.json())
+      //.then(data => { }
+      .then( function(response) {
+
+        if (response.status == 200) {
+
+          console.log("fetchResults: Response indicates success");
+          response.json().then(searchResults => {
+
+            let docCount = 0;
+            let includeNextLink = false;
+            for (const searchHit of searchResults) {
+
+              console.log("searchHit: ", searchHit);
+              docCount += 1;
+              if (docCount <= pageSize) {
+
+                let displayTitle = searchHit.approvalLevel;
+                let displayText = searchHit.approvedBy.firstName + " " + searchHit.approvedBy.lastName + ", " + searchHit.approvedBy.ssn
+
+                displayResult(displayTitle, displayText);
+                console.log(displayText);
+
+              } else {
+                // More records returned (i.e. 1 more) than configured page size,
+                // So include a Next link.
+                includeNextLink = true;
+              }
+
+            }
+
+            pageLinksHTML = "";
+            let thisPage = getPageNumber();
+            if (thisPage > 0) {
+              let previousPage = thisPage - 1;
+              pageLinksHTML = "<a href='#' onclick='getNewPage(" + previousPage + ")''>previous</a>"; 
+            }
+
+            if (includeNextLink) {
+              if (pageLinksHTML != "") {
+                pageLinksHTML += "&nbsp;&nbsp;&nbsp;";
+              }
+              let nextPage = thisPage + 1;
+              pageLinksHTML += "<a href='#' onclick='getNewPage(" + nextPage + ")''>next</a>"; 
+            }
+            document.getElementById("paginationLinks").innerHTML = pageLinksHTML;
+
+          })
+
+        } else {
+
+          // Process error codes.
+          // Server has to propagate a non-200 status as well as the error message content.
+          document.getElementById("searchResultsSection").innerHTML += "<center>Oops. Something went wrong.</center>";
+
+          response.json().then(function(responseBody) {
+            console.log("fetchResults: Response indicates FAIL", responseBody);
+          });
+
+        }
+
+      })
+      .catch((error) => {
+        console.error('Error in fetchResults. ', error);
+      })
+
+    }
+
+    // Displays a query result
+    function displayResult(title, plotSummary) {
+      document.getElementById("searchResultsSection").innerHTML += 
+        "<div class='card'><div class='card-body'>" + 
+          "<h5 class='card-title'>" + title + "</h5>" +
+          "<p class='card-text' style='font-size:14px'>" + plotSummary + "</p>" +
+        "</div></div>"
+
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+.DS_Store
+*.swp
+*notCommitted*
+package-lock.json
+node_modules
+debug.log
+securityConf.js
+mongo_crypt_v1.dylib
+

@@ -1,0 +1,1 @@
+Two backup copies are provided, in case you forget to reset your demo for the next time. v1-backup is the original HTML page with 1 name field, v2-backup is the modified HTML page with two name fields (first and last). 

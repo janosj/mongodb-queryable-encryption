@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="Easy App Development with MongoDB" />
+  <meta name="author" content="Jonathan Janos, Matt Groghan, Michael Lynn" />
+
+  <title>Easy App Development with MongoDB</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Custom fonts for this template -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.css" rel="stylesheet"
+    type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet"
+    type="text/css" />
+
+  <!-- Custom styles for this template -->
+  <link href="styles.css" rel="stylesheet" />
+  <!-- optional additional css styles if'n y'like -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Form -->
+  <section class="bg-light">
+    <div class="container">
+      <h2 class="mb-5 jumbotron text-center">
+        Agile App Development with MongoDB
+      </h2>
+      
+      <div class="col-md-12 mx-auto">
+        
+          <div class="form-group">
+            <div class="form-row">
+              <label for="name">Data Vetted By:</label>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <!-- Use this section for first iteration (1 data field) -->
+                <input type="text" placeholder="Name" name="approvedBy" id="approvedBy" class="form-control" />
+                <!-- Use this section for second iteration (2 data fields). One other change required below.
+                <input type="text" placeholder="First Name" name="firstName" id="firstName" class="form-control" />
+                <input type="text" placeholder="Last Name" name="lastName" id="lastName" class="form-control" />
+                -->
+              </div>
+            </div>
+          </div>
+        
+          <div class="form-group">
+            <div class="form-row">
+              <label for="exp">Approval Level:</label>
+              <div class="col-lg-12 col-md-12">
+                <select name="exp" id="approvalLevel" class="form-control">
+                  <option value="Approved for Public Release">Approved for Public Release</option>
+                  <option value="Approved for Internal Use">Approved for Internal Use</option>
+                  <option value="Known Data Issues - Resolution Pending">Known Data Issues - Resolution Pending</option>
+                  <option value="Do Not Use - Unresolved Data Issues">Do Not Use - Unresolved Data Issues</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12 col-md-3">
+              <p></p>
+              <button class="btn btn-block btn-lg btn-primary" onclick="sendResponse();" class="btn btn-lg btn-success">
+                Submit
+              </button>
+            </div>
+
+            <div class="col-12 col-md-9">
+              <p></p>
+              <p class="text-right">Records Submitted: <label id="recordsSubmitted">0</label></p>
+            </div>
+
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <!-- These are just for the aesthetic. -->
+  <footer class="footer bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+          <ul class="list-inline mb-2">
+            <li class="list-inline-item">
+              <a href="/about.html">About</a>
+            </li>
+            <li class="list-inline-item">&sdot;</li>
+            <li class="list-inline-item">
+              <a href="/contact.html">Contact</a>
+            </li>
+            <li class="list-inline-item">&sdot;</li>
+            <li class="list-inline-item">
+              <a href="/terms.html">Terms of Use</a>
+            </li>
+            <li class="list-inline-item">&sdot;</li>
+            <li class="list-inline-item">
+              <a href="/privacy.html">Privacy Policy</a>
+            </li>
+          </ul>
+          <p class="text-muted small mb-4 mb-lg-0">Looking for Schema Validation? Try this:
+            <p id="validator" class="text-muted small mb-4 mb-lg-0"></p>
+            <a href="" onclick="navigator.clipboard.writeText(validationRule);return false;">clipboard</a>
+          </p>
+          <p class="text-muted small mb-4 mb-lg-0">&copy; MongoDB 2022. All Rights Reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+
+    numRecords = 0;
+    validationRule = "{ $jsonSchema: { required: [ 'approvedBy.lastName' ] } }";
+    document.getElementById("validator").innerText = validationRule;
+
+    function sendResponse() {
+
+      console.log("sendResponse: Start");
+
+      var n = new Date();
+
+      var obj = {};
+      obj.timestamp = n;
+      obj.approvalLevel = $("#approvalLevel").val();
+
+      obj.approvedBy = $("#approvedBy").val();
+      // Uncomment for iteration 2 (2 data fields).
+      //obj.approvedBy = {};
+      //obj.approvedBy.firstName = $("#firstName").val();
+      //obj.approvedBy.lastName = $("#lastName").val();
+      
+      console.log(obj);
+
+      fetch("/insertDocument", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+      }).then(function(response) {
+
+        if (response.status == 200) {
+          recordSuccess();
+        } else {
+          // Process error codes.
+          // Can be used to demonstrate schema validation.
+          // Server has to propagate a non-200 status as well as the error message content.
+          response.json().then(function(responseBody) {
+            console.log(responseBody);
+            alert(JSON.stringify(responseBody));
+          });
+        }
+
+      })
+    }
+
+    function recordSuccess() {
+      numRecords += 1;
+      document.getElementById("recordsSubmitted").innerHTML = numRecords;
+      //window.location = "thankyou.html";
+    }
+
+  </script>
+</body>
+
+</html>
