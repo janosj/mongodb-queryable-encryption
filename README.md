@@ -31,13 +31,9 @@ In summary, the keys steps to get the Vault server running are:
 nd generate the TLS certificates.
 4. Update <em>securityConf.js</em> with the TLS certicate info.
 
-**Step 3:** Update the <em>securityConf.js</em> file.
+**Step 3:** Update the <em>securityConf.js</em> file with the KMIP connection details (i.e. the endpoint and the TLS settings). Also, the QE-enabled Node.js app requires access to the **Automatic Encryption Shared Library**. See the [feature documentation](https://www.mongodb.com/docs/v6.0/core/queryable-encryption/reference/shared-library/#std-label-qe-reference-shared-library-download) for download and installation instructions, and specify the path to the .dylib file in <em>securityConf.js</em>. 
 
-Update the <em>securityConf.js</em> file with the KMIP connection details (i.e. the endpoint and the TLS settings). Also, the QE-enabled Node.js app requires access to the **Automatic Encryption Shared Library**. See the [feature documentation](https://www.mongodb.com/docs/v6.0/core/queryable-encryption/reference/shared-library/#std-label-qe-reference-shared-library-download) for download and installation instructions, and specify the path to the .dylib file in <em>securityConf.js</em>. 
-
-**Step 4:** Start the Node.js web app
-
-With the KMIP Key Provider server running (i.e. the HashiCorp Vault server), and the settings configured in <em>securityConf.js</em>, you can now start the Node.js application. Update the <em>runApp.sh</em> script with your MDB connect URI, and then execute the script. The data entry form can now be accessed from a web browser at http://localhost:8081. <em>index.html</em> is the original basic web form. A second web form, containing the SSN field, is accessible at http://localhost:8081/indexssn.html. The query form is accessible at <em>query.html</em>.
+**Step 4:** Start the Node.js web app. With the KMIP Key Provider server running (i.e. the HashiCorp Vault server), and the settings configured in <em>securityConf.js</em>, you can now start the Node.js application. Update the <em>runApp.sh</em> script with your MDB connect URI, and then execute the script. The data entry form can now be accessed from a web browser at http://localhost:8081. <em>index.html</em> is the original basic web form. A second web form, containing the SSN field, is accessible at http://localhost:8081/indexssn.html. The query form is accessible at <em>query.html</em>.
 
 <h2>Recommended Demonstration Steps:</h2>
 
