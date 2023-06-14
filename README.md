@@ -10,7 +10,7 @@ An excellent demo of this capability has already been built and documented by Pi
 Placeholder: Picture of data query form
 Placeholder: Picture of mongo shell showing binary data.
 
-<h4>Running the Demo</h4>
+<h2>Running the Demo</h2>
 
 **Step 1:** **Node.js** and **npm** have to be installed for the web application. Then, from the <em>code</em> directory, run "npm install" to install the dependencies defined in <em>package.json</em>. 
 
@@ -28,7 +28,7 @@ Update the <em>securityConf.js</em> file with the KMIP connection details (i.e. 
 
 With the KMIP Key Provider server running (i.e. the HashiCorp Vault server), and the settings configured in <em>securityConf.js</em>, you can now start the Node.js application. Update the <em>runApp.sh</em> script with your MDB connect URI, and then execute the script. The data entry form can now be accessed from a web browser at http://localhost:8081. <em>index.html</em> is the original basic web form. A second web form, containing the SSN field, is accessible at http://localhost:8081/indexssn.html. The query form is accessible at <em>query.html</em>.
 
-**Recommended Demonstration Steps:**
+<h2>Recommended Demonstration Steps:</h2>
 
 1. Access index.html, enter the fields, and submit the data to MongoDB. Use MongoDB Compass to show what the data looks like in MongoDB.
 2. Modify the field to include both First Name and Last Name, and submit the data to MongoDB. Observe the new data model using MongoDB Compass.
