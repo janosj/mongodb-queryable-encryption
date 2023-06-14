@@ -16,7 +16,7 @@ Yet the data can still be queried:
 
 <h2>Running the Demo</h2>
 
-**Step 1: Prerequisites** **Node.js** and **npm** have to be installed for the web application. Then, from the <em>code</em> directory, run "npm install" to install the dependencies defined in <em>package.json</em>. This demo also uses MongoDB Compass and the MongoDB Shell (mongosh), which are both clients that can installed on your local desktop. And of course, you have to have a MongoDB cluster running (either Atlas or a self-managed <em>replica set</em>).
+**Step 1: Prerequisites.** **Node.js** and **npm** have to be installed for the web application. Then, from the <em>code</em> directory, run "npm install" to install the dependencies defined in <em>package.json</em>. This demo also uses MongoDB Compass and the MongoDB Shell (mongosh), which are both clients that can installed on your local desktop. And of course, you have to have a MongoDB cluster running (either MongoDB Atlas or a self-managed MongoDB <em>Replica Set</em>).
 
 **Step 2:** Launch the KMIP server. Queryable Encryption requires access to an external Key Management service to manage the Customer Master Key (CMK). This demonstration satisfies this requirement using HashiCorp Vault. Follow the instructions in Pierre's [blog](https://www.mongodb.com/developer/products/atlas/hashicorp-vault-kmip-secrets-engine-mongodb/). The Vault's endpoint and TLS certificates must then be specified in this project's <em>securityConf.js</em> configuration file. Note that a HashiCorp test license is still required. Any Python configuration steps can be skipped, since this demonstration uses a Node.js application in its place.
 
